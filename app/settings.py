@@ -118,17 +118,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# DATABASES = {          # while upoading make sure to keep the credential in environment variable
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'JWT_SQL_DJANGO',
-#         'USER': 'woodsman',
-#         'PASSWORD': 'lOcalhost@1234',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
