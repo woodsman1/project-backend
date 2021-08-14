@@ -10,7 +10,6 @@ class Platform(models.Model):
         return f'{self.platform_name}'
 
 
-
 class Tag(models.Model):
     tag_name = models.CharField(max_length=40)
 
@@ -28,7 +27,7 @@ class Problem(models.Model):
     solved = models.BooleanField(default=True)
 
     def __str__(self) -> str:
-        return f'{self.linked_user.email}-{self.title}-{self.solved}'
+        return f'{self.id}-{self.title}'
 
 
 
