@@ -7,4 +7,7 @@ urlpatterns = [
     path('tags/', TagView.as_view()),
     path('solved-count/', CountProblemsView.as_view()),
     path('solved-problems/', SolvedProblemsView.as_view()),
+    path('unsolved-problems/', UnSolvedProblemView.as_view()),
+    path('problem/', ProblemView.as_view()),
+    
 ]

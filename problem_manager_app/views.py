@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
-from .serializers import PlatformSerializer, TagSerializer, ProblemSerializer
+from .serializers import CreateProblemSerializer, PlatformSerializer, TagSerializer, ProblemSerializer
 from .models import Platform, Problem, Tag, SolvedProblem, UnsolvedProblem
 
 
@@ -68,13 +68,36 @@ class SolvedProblemsView(APIView):
         return paginator.get_paginated_response(serializer.data)
 
 
+class UnSolvedProblemView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        email = request.user.email
+        user = CustomUser.objects.get(email=email)
+        unsolved_probs = UnsolvedProblem.objects.get(linked_user=user)
+        problems = unsolved_probs.unsolved_problems.all()
+
+        paginator = PageNumberPagination()
+        results = paginator.paginate_queryset(problems, request)
+        serializer = ProblemSerializer(results, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
 
 class ProblemView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         pass
 
     def post(self, request):
-        pass
+        request.data['email'] = request.user.email
+        serializer = CreateProblemSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        problem = serializer.save()
+        if problem is not None:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"error" : "bad request"}, status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, reques):
         pass
