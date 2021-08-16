@@ -2,3 +2,4 @@ MySql Client installation error :- https://stackoverflow.com/questions/53641541/
 Jwt Token implementation :- https://stackoverflow.com/questions/54544978/customizing-jwt-response-from-django-rest-framework-simplejwt
 Refrence :- https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#installation
 Pagination :- https://www.youtube.com/watch?v=j4H_inGtivg
+Redirecting delete to Get :- https://stackoverflow.com/questions/4891879/http-delete-request-to-django-returns-a-301moved-permenantly
