@@ -25,7 +25,7 @@ class SolvedProblemSerializer(serializers.ModelSerializer):
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
-        fields = ['id', 'link', 'title', 'tags', 'platform', 'notes']
+        fields = ['id', 'link', 'title', 'tags', 'platform', 'notes', 'solved']
 
 
 

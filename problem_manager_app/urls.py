@@ -9,5 +9,6 @@ urlpatterns = [
     path('solved-problems/', SolvedProblemsView.as_view()),
     path('unsolved-problems/', UnSolvedProblemView.as_view()),
     path('problem/', ProblemView.as_view()),
+    path('problem-update/<int:pk>/', ProblemView.as_view()),
     
 ]

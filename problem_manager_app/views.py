@@ -1,3 +1,4 @@
+from rest_framework.serializers import Serializer
 from users.models import CustomUser
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -87,8 +88,17 @@ class UnSolvedProblemView(APIView):
 class ProblemView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
-        pass
+    def get(self, request, pk):
+        user = CustomUser.objects.get(email=request.user.email)
+        try:
+            problem = Problem.objects.get(pk=pk)
+        except:
+            return Response({"error : Not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+        if problem.linked_user != user:
+            return Response({"error": "unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ProblemSerializer(problem)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         request.data['email'] = request.user.email
