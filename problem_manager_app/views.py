@@ -94,10 +94,11 @@ class ProblemView(APIView):
             problem = Problem.objects.get(pk=pk)
         except:
             return Response({"error : Not found"}, status=status.HTTP_404_NOT_FOUND)
-            
+
         if problem.linked_user != user:
             return Response({"error": "unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = ProblemSerializer(problem)
+        print(request.method)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -109,8 +110,31 @@ class ProblemView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({"error" : "bad request"}, status=status.HTTP_400_BAD_REQUEST)
     
-    def put(self, reques):
+    def put(self, request):
         pass
 
-    def delete(self, request):
-        pass
+    def delete(self, request, pk):
+        user = CustomUser.objects.get(email=request.user.email)
+        try:
+            problem = Problem.objects.get(pk=pk)
+        except:
+            return Response({"error : Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if problem.linked_user != user:
+            return Response({"error": "unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        print("\n\nxxxxxxxxxxxx done xxxxxxxxxx\n\n")
+        try:
+            if problem.solved:
+                sp = SolvedProblem.objects.get(linked_user=user)
+                sp.solved_problem.remove(problem)
+                sp.solved_count -= 1
+                sp.save()
+            else:
+                up = UnsolvedProblem.objects.get(linked_user=user)
+                up.unsolved_problem.remove(problem)
+                up.unsolved_count -= 1
+                up.save()
+            problem.delete()
+            Response({'success': 'Removed Succesfully'}, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response({"error": "Can't delete"}, status=status.HTTP_400_BAD_REQUEST)
