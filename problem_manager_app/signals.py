@@ -34,13 +34,19 @@ def updated_problem(sender, instance, created, **kwargs):
             if p is None:
                 p = SolvedProblem.objects.create(linked_user=user, solved_count=0)
             up.unsolved_problems.remove(problem)
+            up.unsolved_count -= 1
+            up.save()
             p.solved_problems.add(problem)
             p.solved_count += 1
+            p.save()
         else:
             p = UnsolvedProblem.objects.get(linked_user=user)
             sp = SolvedProblem.objects.get(linked_user=user)
             if p is None:
                 p = UnsolvedProblem.objects.create(linked_user=user, unsolved_count=0)
             sp.solved_problems.remove(problem)
+            sp.solved_count -=1
+            sp.save()
             p.unsolved_problems.add(problem)
             p.unsolved_count += 1
+            p.save()
