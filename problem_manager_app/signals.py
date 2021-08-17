@@ -25,6 +25,7 @@ def create_problem(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Problem)
 def updated_problem(sender, instance, created, **kwargs):
+
     if created == False:
         problem = instance
         user = problem.linked_user

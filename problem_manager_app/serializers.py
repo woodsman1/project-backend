@@ -1,3 +1,4 @@
+from django.db.models import fields
 from users.models import CustomUser
 from rest_framework import serializers
 
@@ -52,3 +53,8 @@ class CreateProblemSerializer(serializers.ModelSerializer):
             return p
         except:
             return None
+
+class UpdateProblemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Problem
+        fields = ['link', 'title', 'tags', 'platform', 'notes', 'solved']

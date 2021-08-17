@@ -1,4 +1,3 @@
-from rest_framework.serializers import Serializer
 from users.models import CustomUser
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -6,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
-from .serializers import CreateProblemSerializer, PlatformSerializer, TagSerializer, ProblemSerializer
+from .serializers import CreateProblemSerializer, PlatformSerializer, TagSerializer, ProblemSerializer, UpdateProblemSerializer
 from .models import Platform, Problem, Tag, SolvedProblem, UnsolvedProblem
 
 
@@ -109,8 +108,38 @@ class ProblemView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({"error" : "bad request"}, status=status.HTTP_400_BAD_REQUEST)
     
-    def put(self, request):
-        pass
+    def put(self, request, pk):
+        user = CustomUser.objects.get(email=request.user.email)
+        try:
+            problem = Problem.objects.get(pk=pk)
+        except:
+            return Response({"error : Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if problem.linked_user != user:
+            return Response({"error": "unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        serializer = UpdateProblemSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        
+        problem.link = serializer.validated_data['link']
+        problem.title = serializer.validated_data['title']
+        plat = Platform.objects.get(id =serializer.validated_data['platform'].id)
+        problem.platform = plat
+        problem.notes = serializer.validated_data['notes']
+        problem.solved = serializer.validated_data['solved']
+
+        for tag in serializer.validated_data['tags']:
+                problem.tags.add(tag)
+        
+        for tag in problem.tags.all():
+            if tag not in serializer.validated_data['tags']:
+                problem.tags.remove(tag)
+ 
+        problem.save()
+        serializer = ProblemSerializer(problem)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        
 
     def delete(self, request, pk):    # if page not found error occure add '/' at the end of request same for put request
         user = CustomUser.objects.get(email=request.user.email)
